@@ -1,33 +1,46 @@
 
-import { Fragment, useState } from "react";
+import { useForm } from "react-hook-form";
 import { nanoid } from "nanoid";
+import { toast } from "react-toastify";
   const Create = (props) => {
   const  todos = props.todos;
   const setTodos = props.setTodos;
+  const {register, handleSubmit, reset, formState:{errors}} = useForm();
 
-  const [title, setTitle] = useState("");
 
-  const SubmitHandler = (e) => { e.preventDefault();
-    const newTodo = {
-    id: nanoid(),
-    title: title,
-    iscompleted: false
-    };
+
+  const SubmitHandler = (data) => {
+    data.id = nanoid();
+    data.iscompleted = false;
   
-    let copytodio = [...todos];
-    copytodio.push(newTodo);
-    setTodos(copytodio);
-    //settodos([...todos, newTodo]);
-    setTitle(""); // Clear the input field after submission
+    
+   const copytodos = [...todos,];
+    copytodos.push(data);
+    setTodos(copytodos);
+    toast.success("Task Added Successfully");
+    reset();
+    
   }
+  // console.log(data);
+  // console.log(todos);
+  console.log(errors.message);
+  
 
   return (
+  
    <div className="border-2 border-solid h-1/2 border-white text-center w-1/2 p-10">
+
     <h1 className="text-2xl mb-5">Create Tasks </h1>
-    <form onSubmit={SubmitHandler}>
-      <input className="border-2 border-gray-300 p-2 rounded-md w-full"
-    onChange={(e) => setTitle(e.target.value)}value={title}
-    type="text" placeholder=" title "/>
+
+    <form onSubmit={handleSubmit(SubmitHandler)}>
+
+    <input 
+    {...register("title",{required:"This field is required"})}
+    className="border-2 border-gray-300 p-2 rounded-md w-full"
+     type="text"placeholder=" title"/>
+    {errors && errors.title && errors.title.message && <small className="text-red-500 flex items-start pt-2 text-bold"> {errors.title.message} </small>}
+    {/* {errors?.title?.message} */}
+      
     <br />
     <br />
  
